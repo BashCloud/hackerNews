@@ -30,12 +30,19 @@ var option = {
     },
     item: template,
 };
-
-fetch("http://starlord.hackerearth.com/hackernews")
-    .then((resp) => resp.json()) // Transform the data into json
-    .then(function(data) {
-        data.splice(0, 1);
-        console.log(data);
-        var newsList = new List('news', option, data);
-        newsList.sort('num_points', { order: "desc" });
-    })
+if (!localStorage.getItem("news")) {
+    fetch("http://starlord.hackerearth.com/hackernews")
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) {
+            data.splice(0, 1);
+            console.log(data);
+            window.localStorage.setItem("news", JSON.stringify(data));
+            var newsList = new List('news', option, data);
+            newsList.sort('num_points', { order: "desc" });
+        })
+} else {
+    console.log("Fetched data from Local Storage...");
+    var data = JSON.parse(localStorage.getItem("news"));
+    var newsList = new List('news', option, data);
+    newsList.sort('num_points', { order: "desc" });
+}
